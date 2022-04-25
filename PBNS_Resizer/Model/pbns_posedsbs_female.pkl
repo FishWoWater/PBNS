@@ -1,0 +1,1 @@
+/home/junjiewang/smpl_models/preprocessed/pbns_posedsbs_models/pbns_posedsbs_female.pkl
