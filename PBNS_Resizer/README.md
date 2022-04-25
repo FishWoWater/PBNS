@@ -1,4 +1,27 @@
+When we take T-pose as the rest pose, things are much simpler. What we need to learn is the displacement of the cloth, which can generalize to different body shapes. In your work, you decouple this learning into two parts: a) obtain a corase cloth blend shapes by querying the body blend shapes by promixity, b) learn a displacement map for refinement(which can be expressed as the combination of serveral bases).
+
+But when it comes to some other pose as the rest pose, things become a bit challenging. I think there are two aspects of error: 1) we obtain the cloth skinning weight by finding the closest body vertex and when we use this approximated cloth skin weight to transform the cloth, deviations can accumulate( especially for some loose clothing) 2) the standard shape-blend-shapes for the body(i.e. `shapedirs` in smpl) is defined in T-pose space, and it can be different when we considering some other poses(actually SMPL introduces pose-blend-shapes to correct this).
+
+There are two strategies to address the above limitations
+
+1. **Train with posed shape-blend-shapes:** We align the cloth and the body in the desired rest-pose(e.g. by arcsim or manually). In this way, the two types of error can be largely alleviated. But we have a new problem: how to define the shape-blend-shapes in the new pose. You mentioned the solution: propagate the shape-blend-shapes from the T-pose to some desired pose by treating them as something like the vertices and use LBS. I think in this way we can still use the derived shape-blend-shapes as an initialization for the cloth (also setup by proximity).  (**i.e. pose_mode set to 1**)
+2. **Align in T-pose and follow standard SMPL:** We still align the cloth and the body in the T-pose, and then follow the standard SMPL pipeline to pose the cloth and body to some desired pose. In this solution, both types of error exist and we expect the neural network to learn a powerful displacement to cover it. This solution is straightforward but can be sub-optimal.  (**i.e. pose_mode set to 2**)
+
+
+
+If you are using the first strategy, you need to change the original field in smpl_model `v_template` and `shapedirs` to your desired pose; Besides, you should also use arcsim to align the outfit for a posed template
+
+
+
 <h3>Train script usage</h3>
+
+**POSE MODE**<br>
+
+-p, --pose_mode<br>
+
+train with posed shape blend shapes or use the other one strategy 
+
+
 
 <b>GPU</b><br>
 -g, --gpu<br>
@@ -45,6 +68,14 @@ To change other parameters (hyperparameters or simulation properties), you will 
 
 
 <h3>Evaluation script usage</h3>
+
+**POSE MODE**<br>
+
+-p, --pose_mode<br>
+
+train with posed shape blend shapes or use the other one strategy 
+
+
 
 <b>GPU</b><br>
 -g, --gpu<br>
