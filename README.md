@@ -1,4 +1,4 @@
-**A fork version of PBNS to support Resizer for arbitrary poses(see [PBNS_Resizer](PBNS_Resizer/README.md) for more details) **
+**A fork version of PBNS to support Resizer for arbitrary poses(see [PBNS_Resizer](PBNS_Resizer/README.md) for more details)**
 
 
 
